@@ -1,16 +1,28 @@
-[[redirects]]
-  from = "/old-path"
-  to = "/new-path"
-  status = 301
-  force = false
-  query = {path = ":path"}
-  conditions = {Language = ["en"], Country = ["US"], Role = ["admin"]}
+# Production context:
+# All deploys from the main repository branch
+# will inherit these settings.
+[context.production]
+  command = "make production"
+  [context.production.environment]
+    ACCESS_TOKEN = "super secret"
 
-## This rule redirects to an external API, signing requests with a secret
-[[redirects]]
-  from = "/search"
-  to = "https://api.mysearch.com"
-  status = 200
-  force = true # COMMENT: ensure that we always redirect
-  headers = {X-From = "Netlify"}
-  signed = "API_SIGNATURE_TOKEN"
+# Deploy Preview context:
+# All deploys generated from a pull/merge request
+# will inherit these settings.
+[context.deploy-preview.environment]
+  ACCESS_TOKEN = "not so secret"
+
+# Branch deploy context:
+# All deploys that are not from a pull/merge request
+# or from the production branch will inherit these settings.
+[context.branch-deploy]
+  command = "make staging"
+
+# Specific branch context:
+# Deploys from this branch will take these settings
+# and override their current ones.
+[context.feature]
+  command = "make feature"
+
+[context."features/branch"]
+  command = "gulp"
